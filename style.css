@@ -70,40 +70,37 @@ h1 {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 1.2em;
-    transition: all 0.1s;
+    width: 32px;
+    height: 32px;
+}
+
+.tile svg {
+    width: 100%;
+    height: 100%;
 }
 
 .tile.floor {
-    background: #1a1a2e;
-    color: #3a3a5a;
+    background: transparent;
 }
 
 .tile.wall {
-    background: #2a2a4a;
-    color: #5a5a7a;
+    background: transparent;
 }
 
 .tile.player {
-    background: #1a1a2e;
-    color: #00ff00;
     animation: pulse 1s infinite;
 }
 
 .tile.enemy {
-    background: #1a1a2e;
-    color: #ff4444;
+    filter: drop-shadow(0 0 3px rgba(255, 68, 68, 0.5));
 }
 
 .tile.stairs {
-    background: #1a1a2e;
-    color: #ffff00;
     animation: glow 1s infinite;
 }
 
 .tile.item {
-    background: #1a1a2e;
-    color: #00ffff;
+    filter: drop-shadow(0 0 3px rgba(0, 255, 255, 0.5));
 }
 
 @keyframes pulse {
