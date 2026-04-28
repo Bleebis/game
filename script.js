@@ -781,9 +781,13 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-startBtn.addEventListener('click', startGame);
-restartBtn.addEventListener('click', startGame);
-
 // Инициализация
-initThree();
-animate();
+document.addEventListener('DOMContentLoaded', () => {
+    initThree();
+    
+    // Обработчики кнопок
+    startBtn.addEventListener('click', startGame);
+    restartBtn.addEventListener('click', startGame);
+    
+    animate();
+});
