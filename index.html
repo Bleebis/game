@@ -3,12 +3,174 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Подземелье - Рогалик</title>
-    <link rel="stylesheet" href="style.css">
+    <title>3D Подземелье - Рогалик</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #fff;
+            overflow: hidden;
+        }
+        
+        #gameCanvas {
+            display: block;
+            width: 100vw;
+            height: 100vh;
+        }
+        
+        .ui-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        
+        .stats-bar {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 15px 25px;
+            border-radius: 10px;
+            border: 2px solid #4a4a6a;
+            pointer-events: auto;
+        }
+        
+        .stat {
+            font-size: 18px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .message-log {
+            position: absolute;
+            bottom: 80px;
+            left: 20px;
+            width: 350px;
+            max-height: 200px;
+            overflow-y: auto;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid #4a4a6a;
+            pointer-events: auto;
+        }
+        
+        .message {
+            margin-bottom: 8px;
+            font-size: 14px;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .floor-info {
+            position: absolute;
+            top: 80px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 15px 25px;
+            border-radius: 10px;
+            border: 2px solid #4a4a6a;
+            font-size: 20px;
+            pointer-events: auto;
+        }
+        
+        .instructions {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            pointer-events: auto;
+        }
+        
+        #startBtn, #restartBtn {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px 50px;
+            font-size: 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            pointer-events: auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        #startBtn:hover, #restartBtn:hover {
+            transform: translate(-50%, -50%) scale(1.05);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7);
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        .hp-bar-container {
+            position: absolute;
+            bottom: 60px;
+            right: 20px;
+            width: 200px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            border-radius: 8px;
+            border: 2px solid #4a4a6a;
+        }
+        
+        .hp-bar {
+            width: 100%;
+            height: 20px;
+            background: #3a3a5a;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .hp-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff4444, #ff6666);
+            transition: width 0.3s ease;
+        }
+        
+        .minimap {
+            position: absolute;
+            top: 80px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            border-radius: 10px;
+            border: 2px solid #4a4a6a;
+        }
+        
+        #minimapCanvas {
+            display: block;
+        }
+    </style>
 </head>
 <body>
-    <div class="game-container">
-        <h1>🏰 Подземелье</h1>
+    <canvas id="gameCanvas"></canvas>
+    
+    <div class="ui-overlay">
         <div class="stats-bar">
             <div class="stat">❤️ HP: <span id="hp">100</span>/<span id="maxHp">100</span></div>
             <div class="stat">⚔️ Атака: <span id="attack">10</span></div>
@@ -16,14 +178,28 @@
             <div class="stat">🏆 Уровень: <span id="level">1</span></div>
             <div class="stat">✨ XP: <span id="xp">0</span>/<span id="nextLevel">50</span></div>
         </div>
-        <div class="game-area" id="gameArea"></div>
-        <div class="info-panel">
-            <div class="floor-info">Этаж: <span id="floor">1</span></div>
-            <div class="message-log" id="messageLog"></div>
+        
+        <div class="floor-info">Этаж: <span id="floor">1</span></div>
+        
+        <div class="minimap">
+            <canvas id="minimapCanvas" width="150" height="150"></canvas>
         </div>
-        <p class="instructions">WASD или Стрелки для движения, ПРОБЕЛ для ожидания</p>
-        <button id="startBtn">Начать игру</button>
+        
+        <div class="hp-bar-container">
+            <div class="hp-bar">
+                <div class="hp-fill" id="hpFill" style="width: 100%"></div>
+            </div>
+        </div>
+        
+        <div class="message-log" id="messageLog"></div>
+        
+        <p class="instructions">WASD или Стрелки для движения, ПРОБЕЛ для ожидания, E - использовать предмет</p>
+        
+        <button id="startBtn">🎮 Начать игру</button>
+        <button id="restartBtn" class="hidden">🔄 Играть снова</button>
     </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
