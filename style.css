@@ -5,134 +5,196 @@
 }
 
 body {
-    font-family: 'Arial', sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    font-family: 'Courier New', monospace;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
     overflow: hidden;
+    color: #eee;
 }
 
 .game-container {
     text-align: center;
-    background: rgba(255, 255, 255, 0.95);
-    padding: 30px;
-    border-radius: 20px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    background: rgba(20, 20, 30, 0.95);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    border: 2px solid #4a4a6a;
 }
 
 h1 {
-    color: #333;
-    margin-bottom: 20px;
-    font-size: 2em;
+    color: #ffd700;
+    margin-bottom: 15px;
+    font-size: 1.8em;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.stats-bar {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 15px;
+    padding: 10px;
+    background: rgba(30, 30, 50, 0.8);
+    border-radius: 8px;
+    border: 1px solid #4a4a6a;
+}
+
+.stat {
+    font-size: 0.9em;
+    color: #ccc;
+}
+
+.stat span {
+    color: #ffd700;
+    font-weight: bold;
 }
 
 .game-area {
     width: 600px;
-    height: 300px;
-    border: 4px solid #333;
-    border-radius: 10px;
+    height: 400px;
+    border: 3px solid #4a4a6a;
+    border-radius: 5px;
     position: relative;
     overflow: hidden;
-    background-image: url('assets/background.svg');
-    background-size: cover;
-    background-position: center;
-    cursor: pointer;
+    background: #0d0d15;
+    display: grid;
+    grid-template-columns: repeat(20, 1fr);
+    grid-template-rows: repeat(16, 1fr);
 }
 
-.ball {
-    width: 40px;
-    height: 40px;
-    background: radial-gradient(circle at 30% 30%, #ff6b6b, #c92a2a);
-    border-radius: 50%;
-    position: absolute;
-    bottom: 0;
-    left: 50px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+.tile {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2em;
+    transition: all 0.1s;
 }
 
-.ball.jumping {
-    animation: jump 0.6s ease-out;
+.tile.floor {
+    background: #1a1a2e;
+    color: #3a3a5a;
 }
 
-@keyframes jump {
-    0% {
-        bottom: 0;
-    }
-    40% {
-        bottom: 150px;
-    }
-    60% {
-        bottom: 150px;
-    }
-    100% {
-        bottom: 0;
-    }
+.tile.wall {
+    background: #2a2a4a;
+    color: #5a5a7a;
 }
 
-.obstacle {
-    width: 30px;
+.tile.player {
+    background: #1a1a2e;
+    color: #00ff00;
+    animation: pulse 1s infinite;
+}
+
+.tile.enemy {
+    background: #1a1a2e;
+    color: #ff4444;
+}
+
+.tile.stairs {
+    background: #1a1a2e;
+    color: #ffff00;
+    animation: glow 1s infinite;
+}
+
+.tile.item {
+    background: #1a1a2e;
+    color: #00ffff;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+@keyframes glow {
+    0%, 100% { text-shadow: 0 0 5px #ffff00; }
+    50% { text-shadow: 0 0 15px #ffff00; }
+}
+
+.info-panel {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+    padding: 10px;
+    background: rgba(30, 30, 50, 0.8);
+    border-radius: 8px;
+    border: 1px solid #4a4a6a;
+}
+
+.floor-info {
+    font-size: 1.1em;
+    color: #ffd700;
+}
+
+.message-log {
+    flex: 1;
+    margin-left: 20px;
     height: 60px;
-    background: linear-gradient(to bottom, #2d6a4f, #1b4332);
-    position: absolute;
-    bottom: 0;
-    right: -30px;
-    border-radius: 5px 5px 0 0;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    overflow-y: auto;
+    text-align: left;
+    font-size: 0.85em;
+    color: #aaa;
+    background: rgba(10, 10, 20, 0.5);
+    padding: 8px;
+    border-radius: 5px;
 }
 
-.obstacle.moving {
-    animation: moveObstacle 2s linear infinite;
-}
-
-@keyframes moveObstacle {
-    0% {
-        right: -30px;
-    }
-    100% {
-        right: 630px;
-    }
-}
-
-.score {
-    font-size: 1.5em;
-    color: #333;
-    margin: 20px 0 10px 0;
-    font-weight: bold;
+.message-log p {
+    margin: 3px 0;
+    padding: 2px 0;
+    border-bottom: 1px solid rgba(74, 74, 106, 0.3);
 }
 
 .instructions {
-    color: #666;
-    margin-bottom: 15px;
-    font-size: 0.9em;
+    color: #888;
+    margin: 15px 0 10px 0;
+    font-size: 0.85em;
 }
 
 #startBtn {
     padding: 12px 30px;
     font-size: 1.1em;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border: none;
-    border-radius: 25px;
+    background: linear-gradient(135deg, #4a4a6a 0%, #2a2a4a 100%);
+    color: #ffd700;
+    border: 2px solid #4a4a6a;
+    border-radius: 8px;
     cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    transition: all 0.2s;
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
 }
 
 #startBtn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+    background: linear-gradient(135deg, #5a5a7a 0%, #3a3a5a 100%);
+    border-color: #ffd700;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
 }
 
 #startBtn:active {
-    transform: translateY(0);
+    transform: scale(0.98);
 }
 
-.ground {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    height: 5px;
-    background: #2d6a4f;
+/* Scrollbar styling */
+.message-log::-webkit-scrollbar {
+    width: 8px;
+}
+
+.message-log::-webkit-scrollbar-track {
+    background: rgba(10, 10, 20, 0.5);
+    border-radius: 4px;
+}
+
+.message-log::-webkit-scrollbar-thumb {
+    background: #4a4a6a;
+    border-radius: 4px;
+}
+
+.message-log::-webkit-scrollbar-thumb:hover {
+    background: #5a5a7a;
 }
