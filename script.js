@@ -7,7 +7,7 @@ const TILE_SIZE = 2;
 
 // Глобальные переменные Three.js
 let scene, camera, renderer;
-let playerMesh, enemyMeshes = [], itemMeshes = [], wallMeshes = [], floorMeshes = [];
+let playerMesh = null, enemyMeshes = [], itemMeshes = [], wallMeshes = [], floorMeshes = [];
 let stairsMesh = null;
 let minimapScene, minimapCamera, minimapRenderer;
 
@@ -716,31 +716,43 @@ function animate() {
 
 // Начало игры
 function startGame() {
+    // Очистка сцены от старых объектов
+    if (playerMesh) scene.remove(playerMesh);
+    enemyMeshes.forEach(mesh => scene.remove(mesh));
+    itemMeshes.forEach(mesh => scene.remove(mesh));
+    wallMeshes.forEach(mesh => scene.remove(mesh));
+    floorMeshes.forEach(mesh => scene.remove(mesh));
+    if (stairsMesh) scene.remove(stairsMesh);
+    
+    enemyMeshes = [];
+    itemMeshes = [];
+    wallMeshes = [];
+    floorMeshes = [];
+    
     player = new Player(10, 10);
     floor = 1;
     messageLog = [];
     enemies = [];
     items = [];
-    
+
     floorEl.textContent = floor;
     updateStats();
-    
+
     generateMap();
     updatePlayerPosition();
-    
+
     // Создаем игрока
-    if (playerMesh) scene.remove(playerMesh);
     playerMesh = createPlayerMesh();
     playerMesh.position.set(player.x * TILE_SIZE, 0.5, player.y * TILE_SIZE);
     scene.add(playerMesh);
-    
+
     isGameRunning = true;
     startBtn.classList.add('hidden');
     restartBtn.classList.add('hidden');
-    
+
     addMessage('🎮 Добро пожаловать в подземелье!', '#00ff00');
     addMessage('Найдите лестницу (желтая стрелка) чтобы спуститься ниже', '#ffff00');
-    
+
     updateMinimap();
 }
 
