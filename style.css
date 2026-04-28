@@ -35,7 +35,9 @@ h1 {
     border-radius: 10px;
     position: relative;
     overflow: hidden;
-    background: linear-gradient(to bottom, #87CEEB 0%, #E0F6FF 100%);
+    background-image: url('assets/background.svg');
+    background-size: cover;
+    background-position: center;
     cursor: pointer;
 }
 
